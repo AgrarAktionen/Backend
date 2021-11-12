@@ -63,6 +63,13 @@ public class Item {
     @JoinColumn(name = "apiId")
     private APILink apiLink;
 
+/*
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "itemId", referencedColumnName = "itemId")
+    private PredictedItem predictedItem;
+
+ */
+
     private boolean inserted = false;
 
 

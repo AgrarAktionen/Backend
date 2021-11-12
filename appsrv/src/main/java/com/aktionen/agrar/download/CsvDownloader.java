@@ -1,6 +1,5 @@
 package com.aktionen.agrar.download;
 
-
 import com.aktionen.agrar.dao.ItemDao;
 import com.aktionen.agrar.dao.PriceDao;
 import com.aktionen.agrar.model.Item;
@@ -84,8 +83,6 @@ public class CsvDownloader {
     /*
     @Inject
     UserTransaction userTransaction;
-
-
     @PostConstruct
     public void init() throws SystemException {
         //set a timeout as high as you need
@@ -132,4 +129,4 @@ public class CsvDownloader {
         return price;
     }
 }
-///var/lib/appsrvstorage/file.csv
+//"var/lib/appsrvstorage/file.csv"

@@ -21,12 +21,13 @@ public class PriceDao {
     ItemDao itemDao;
 
     public void insertAll(Price price, Item item){
-    // TODO create a currentId which is an actual id in the database: hibernate_sequence -> import SQL
-
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            price.setPricePk(new PricePk(item.getItemId(), timestamp));
-            //em.persist(price);
+            //price.setPricePk(new PricePk(1000, timestamp));
+            price.setPricePk(new PricePk(item.getItemId(), timestamp)); // -> throws an ERROR because the correct update implementation has not been done yet!
+                                                                        // however, it can be neglected until fixing TODO: Solving Price ERROR -> Maybe you have to change the primary key relation from the Price to the Item Model to a 1:n relation because one Item may have more Prices because of the fact that it had changed. So you have to check if the timestamp to specify!
+
+        // em.persist(price);
             em.merge(price);
             em.flush();
 
