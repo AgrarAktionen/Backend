@@ -3,7 +3,6 @@ package com.aktionen.agrar.model;
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.Data;
 
-import javax.inject.Named;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

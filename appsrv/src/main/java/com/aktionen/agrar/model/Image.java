@@ -3,7 +3,10 @@ package com.aktionen.agrar.model;
 import lombok.Data;
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 

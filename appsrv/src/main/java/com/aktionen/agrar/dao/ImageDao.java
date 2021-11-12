@@ -55,68 +55,68 @@ public class ImageDao {
         //Implement an Function to detect all images which uploaded from POST Request
         int currentId = images.get(0).getId();
         for (Image predictedImage : images) {
-                Image image = em.createQuery("select i from Image i where i.id = :ids", Image.class)
-                        .setParameter("ids", currentId)
-                        .getSingleResult();
-                if (!image.equals(null)) {
-                    /*Classification Algorithm*/
-                    ai.djl.modality.cv.Image predictImage;
-                    try (InputStream is = new ByteArrayInputStream(image.getBytes())) {
-                        predictImage = ImageFactory.getInstance().fromImage(Imaging.getBufferedImage(is));
+            Image image = em.createQuery("select i from Image i where i.id = :ids", Image.class)
+                    .setParameter("ids", currentId)
+                    .getSingleResult();
+            if (!image.equals(null)) {
+                /*Classification Algorithm*/
+                ai.djl.modality.cv.Image predictImage;
+                try (InputStream is = new ByteArrayInputStream(image.getBytes())) {
+                    predictImage = ImageFactory.getInstance().fromImage(Imaging.getBufferedImage(is));
+                }
+
+                if (predictImage != null) {
+                    Criteria<ai.djl.modality.cv.Image, Classifications> criteria;
+                    if ("TensorFlow".equals(Engine.getInstance().getEngineName())) {
+                        Translator<ai.djl.modality.cv.Image, Classifications> translator = ImageClassificationTranslator.builder()
+                                .addTransform(new Resize(224))
+                                .addTransform(new Normalize(MEAN, STD))
+                                .build();
+                        criteria =
+                                Criteria.builder()
+                                        .setTypes(ai.djl.modality.cv.Image.class, Classifications.class)
+                                        .optArtifactId("resnet")
+                                        .optTranslator(translator)
+                                        .optProgress(new ProgressBar())
+                                        .build();
+                    } else {
+                        criteria =
+                                Criteria.builder()
+                                        .setTypes(ai.djl.modality.cv.Image.class, Classifications.class)
+                                        .optArtifactId("resnet")
+                                        .optProgress(new ProgressBar())
+                                        .build();
                     }
 
-                    if (predictImage != null) {
-                        Criteria<ai.djl.modality.cv.Image, Classifications> criteria;
-                        if ("TensorFlow".equals(Engine.getInstance().getEngineName())) {
-                            Translator<ai.djl.modality.cv.Image, Classifications> translator = ImageClassificationTranslator.builder()
-                                    .addTransform(new Resize(224))
-                                    .addTransform(new Normalize(MEAN, STD))
-                                    .build();
-                            criteria =
-                                    Criteria.builder()
-                                            .setTypes(ai.djl.modality.cv.Image.class, Classifications.class)
-                                            .optArtifactId("resnet")
-                                            .optTranslator(translator)
-                                            .optProgress(new ProgressBar())
-                                            .build();
-                        } else {
-                            criteria =
-                                    Criteria.builder()
-                                            .setTypes(ai.djl.modality.cv.Image.class, Classifications.class)
-                                            .optArtifactId("resnet")
-                                            .optProgress(new ProgressBar())
-                                            .build();
-                        }
+                    try (ZooModel<ai.djl.modality.cv.Image, Classifications> model = ModelZoo.loadModel(criteria);
+                         Predictor<ai.djl.modality.cv.Image, Classifications> predictor = model.newPredictor()) {
 
-                        try (ZooModel<ai.djl.modality.cv.Image, Classifications> model = ModelZoo.loadModel(criteria);
-                             Predictor<ai.djl.modality.cv.Image, Classifications> predictor = model.newPredictor()) {
+                        Classifications result = predictor.predict(predictImage);
+                        /*Classification Algorithm*/
+                        System.out.println(result);
 
-                            Classifications result = predictor.predict(predictImage);
-                            /*Classification Algorithm*/
-                            System.out.println(result);
-
-                            predictedImage.setClassification(String.valueOf(result.best()));
-                            predictedImage.setClassname(String.valueOf(result.best().getClassName()));
-                            predictedImage.setProbability(result.best().getProbability());
-                            //em.persist(item);
-                            em.merge(predictedImage);
-                            em.flush();
-                            currentId++;
-                        }
-                    } else {
-                        predictedImage.setClassification("empty");
-                        predictedImage.setClassname("empty");
-                        predictedImage.setProbability(0.0);
+                        predictedImage.setClassification(String.valueOf(result.best()));
+                        predictedImage.setClassname(String.valueOf(result.best().getClassName()));
+                        predictedImage.setProbability(result.best().getProbability());
                         //em.persist(item);
                         em.merge(predictedImage);
                         em.flush();
                         currentId++;
                     }
                 } else {
+                    predictedImage.setClassification("empty");
+                    predictedImage.setClassname("empty");
+                    predictedImage.setProbability(0.0);
+                    //em.persist(item);
+                    em.merge(predictedImage);
+                    em.flush();
                     currentId++;
-                    System.out.println("No Entity for ID found!");
                 }
+            } else {
+                currentId++;
+                System.out.println("No Entity for ID found!");
             }
+        }
 
     }
 

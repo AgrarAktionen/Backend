@@ -2,7 +2,6 @@ package com.aktionen.agrar.rest;
 
 import com.aktionen.agrar.dao.ItemDao;
 import com.aktionen.agrar.dao.PredectionDao;
-import com.aktionen.agrar.download.ItemInserter;
 import com.aktionen.agrar.model.Item;
 import com.aktionen.agrar.model.PredictedItem;
 import io.quarkus.qute.Template;
