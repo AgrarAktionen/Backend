@@ -1,19 +1,19 @@
-# Quarkus Application Example
+# AgrarAktionenMobile
 
-This Jakarta Enterprise Edition example shows how to deploy
-an application to the Kubernetes Bare Metal [LeoCloud](https://cloud.htl-leonding.ac.at) by continuous delivery.
+This Quarkus Application includes part from the AgrarAktionen Project.
+  -We are getting data From an 
 
 It is made up of the following components:
 - a mysql Database 
-- a [SPA](https://en.wikipedia.org/wiki/Single-page_application) Browser Client Application implemented in Javascript accessing either
-the quarkus backend or the express server backend.
-- a supersonic fast application server implemented with [quarkus](https://quarkus.io), compiled to a [native image](https://quarkus.io/guides/building-native-image)
-- a nodejs express server accessing the same database as an alternative to Quarkus
+- quarkus backend 
+- a tensorflow pretrained imagerecognition model
 
-The Application is currently [deployed on the LeoCloud](https://student.cloud.htl-leonding.ac.at/c.aberger/)
+About the project.
+===
+1. You are abled to send Images via a POST Request to the Database. 
+2. The application server can analyse the image by running the picture identification algorithm.
+3. After proceccing the image, a set of similar products is created and you can reach dem by calling the API rest endpoint.
 
-When the source code is pushed the docker images are built automatically with 
-github actions.
 
 Database for local development
 ===
@@ -47,51 +47,5 @@ MicroProfile OpenAPI
 
 appsrv
 ===
-This is the application server
-See the [appsrv](./appsrv/README.md) subfolder for how to use REST/JPA/CDI in Quarkus
-
-www
-===
-see the [www](./www/readme.md) subfolder for the javascript client
-
-JavaFX
-===
-See the application subfolder. This application is out of date, contributions welcome!
-
-Cucumber Feature Tests and Code Coverage
-===
-see appsrc/src/test/resources for a feature test. To see the coverage report run the following:
-~~~bash
-cd ./appsrv
-mvn clean compile test jacoco:report
-~~~
-
-Then open appsrv/target/site/jacoco/index.html.
-As you see only Person has been tested. Contributions are welcome.
-
-Deploy into the Cloud
-===
-
-Before we deploy to a real cloud we test our application on minikube.
-First of all we install minikube. This is described [here](https://aberger.at/blog/cloud/2021/05/04/minikube-intro.html).
-For Installing kubernetes on Docker Desktop read [this article](https://andrewlock.net/running-kubernetes-and-the-dashboard-with-docker-desktop/).
-Note: kubernetes on Desktop does not have the standard storage class, you can create it with [this yaml](./k8s/minikube/docker-standard-storage-class.yaml)
-
-You have to get your credentials from the cloud, adjust your namespace
-and baseUrl, then you can deploy the application with:
-
-```bash
-kubectl deploy -f k8s/app.yaml
-```
-
-Continous Integration and Delivery (CI/CD)
-===
-
-On every push the application is compiled and uploaded to the cloud registry. See the "Actions" tab in this github project for details. See also [CI/CD und DevOps](https://aberger.at/blog/2021/05/29/cloud-startproject.html) in my blog.
-
-Deployment
-===
-
-The Demo can be seen at
-https://student.cloud.htl-leonding.ac.at/c.aberger/
+This is the application server, with business logics
 
