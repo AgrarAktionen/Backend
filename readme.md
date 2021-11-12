@@ -48,4 +48,3 @@ MicroProfile OpenAPI
 appsrv
 ===
 This is the application server, with business logics
-
