@@ -16,7 +16,7 @@ services:
     expose:
       - 3306
     volumes:
-      - database:/var/lib/
+      - database:/var/lib/mysql/
   appsrv:
     build:
       context: ./appsrv
