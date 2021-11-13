@@ -27,7 +27,7 @@ stringData:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: appsrvstorage
+  name: database
 spec:
   accessModes:
     - ReadWriteMany
@@ -39,7 +39,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: database
+  name: appsrvstorage
 spec:
   accessModes:
     - ReadWriteMany
