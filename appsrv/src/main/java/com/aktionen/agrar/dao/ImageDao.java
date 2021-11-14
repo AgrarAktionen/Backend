@@ -37,7 +37,7 @@ public class ImageDao {
     @Inject
     EntityManager em;
 
-    public Image save(@NotNull Image image) {
+    public Image add(@NotNull Image image) {
         return em.merge(image);
     }
 
@@ -124,6 +124,8 @@ public class ImageDao {
     public List<Image> getAll() {
         return em.createQuery("select i from Image i ", Image.class).getResultList();
     }
-
+    public void delete(Image image) {
+        em.remove(image);
+    }
 
 }
