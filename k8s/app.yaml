@@ -4,10 +4,7 @@ metadata:
   name: mysql-setup
 data:
   create.sql: |
-    ALTER USER 'user'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
-    GRANT ALL PRIVILEGES ON *.* TO 'user'@'%';
-    FLUSH PRIVILEGES;
-    CREATE DATABASE db;
+    select "hello from database init script!" from dual;
   wait.sh: |
     until echo '\q' | mysql -hmysql -P"$PORT" -u"$USER" -p"$PASSWORD" $DATABASE; do
         echo "waiting for godot ..."
@@ -34,7 +31,7 @@ spec:
   storageClassName: standard
   resources:
     requests:
-      storage: 50Mi
+      storage: 512Mi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -89,6 +86,7 @@ spec:
                   name: mysql-admin
                   key: username
             - name: DATABASE
+#              value: mysql
               valueFrom:
                 secretKeyRef:
                   name: mysql-admin
@@ -162,6 +160,9 @@ spec:
                 secretKeyRef:
                   name: mysql-admin
                   key: password
+            - name: MYSQL_ROOT_HOST
+              value: '%'
+
       volumes:
         - name: init-script
           configMap:
@@ -232,28 +233,27 @@ spec:
         - name: mysql
           image: mysql:8
           resources:
-            requests:
-              memory: "500Mi"
-              cpu: "200m"
             limits:
               memory: "1Gi"
-              cpu: "400m"
+              cpu: "1000m"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-storage
-              mountPath: /var/lib/mysql
+              mountPath: /var/lib/mysql/
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
-              readOnly: true
+#              readOnly: true
+#          command: ["tail"]
+#          args: [ "-f", "/dev/null" ]
           env:
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
                   name: mysql-admin
                   key: username
-            - name: MYSQL_DB
+            - name: MYSQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: mysql-admin
@@ -268,6 +268,8 @@ spec:
                 secretKeyRef:
                   name: mysql-admin
                   key: password
+            - name: MYSQL_ROOT_HOST
+              value: '%'
 ---
 apiVersion: v1
 kind: Service
