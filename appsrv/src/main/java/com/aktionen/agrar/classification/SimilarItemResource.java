@@ -1,6 +1,6 @@
 package com.aktionen.agrar.classification;
 
-import com.aktionen.agrar.dao.GetSimilarItemDao;
+import com.aktionen.agrar.dao.SimilarItemDao;
 import com.aktionen.agrar.model.Item;
 
 import javax.inject.Inject;
@@ -14,15 +14,23 @@ import java.util.List;
 @Transactional
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/similarItems")
-public class GetSimilarItemResource {
+public class SimilarItemResource {
 
     @Inject
-    GetSimilarItemDao getSimilarItemDao;
+    SimilarItemDao similarItemDao;
 
+
+    @GET
+    @Path("/getAlreadyUsed")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public List<Item> getAlreadyUsedOnce(){
+        return similarItemDao.getAlreadyUsed();
+    }
 
     @GET
     @Path("/")
     public List<Item> all() {
-        return getSimilarItemDao.getAll();
+        return similarItemDao.getAllUseAbleSimilarItems();
     }
 }

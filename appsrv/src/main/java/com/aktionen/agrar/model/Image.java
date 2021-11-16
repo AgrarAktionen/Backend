@@ -21,6 +21,8 @@ public class Image {
     private String classification;
     private String classname;
     private double probability;
+    private boolean usable;
+    private boolean alreadyUsed;
 
     @FormParam("file")
     @PartType(MediaType.APPLICATION_OCTET_STREAM)

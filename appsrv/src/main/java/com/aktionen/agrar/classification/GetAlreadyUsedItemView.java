@@ -3,7 +3,6 @@ package com.aktionen.agrar.classification;
 import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
 import com.aktionen.agrar.dao.SimilarItemDao;
-import com.aktionen.agrar.dao.ImageDao;
 import com.aktionen.agrar.model.Item;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -13,17 +12,16 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 @Transactional
+@Produces(MediaType.APPLICATION_JSON)
 @Path("/get")
-public class GetSimilarItemView {
-
-    @Inject
-    Template getSimilarItems;
-
+public class GetAlreadyUsedItemView {
     @Inject
     Template getAlreadyUsed;
 
@@ -31,17 +29,12 @@ public class GetSimilarItemView {
     @Inject
     SimilarItemDao similarItemDao;
 
-    @Inject
-    ImageDao imageDao;
-
-    @Path("/SimilarItemView")
+    @Path("/AlreadyUsedView")
     @GET
-    public TemplateInstance getSimilarItemsInstance() throws URISyntaxException, IOException, ImageReadException, ModelException, TranslateException {
+    public TemplateInstance getAlreadyUsedInstance() throws URISyntaxException, IOException, ImageReadException, ModelException, TranslateException {
 
         //GET Request of the classified images
-        List<Item> items = similarItemDao.getAllUseAbleSimilarItems();
-        return getSimilarItems.data("items", items);
+        List<Item> items = similarItemDao.getAlreadyUsed();
+        return getAlreadyUsed.data("items", items);
     }
-
-
 }

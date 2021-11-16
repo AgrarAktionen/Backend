@@ -25,9 +25,8 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 
 @Named
@@ -42,6 +41,7 @@ public class ImageDao {
     }
 
     public Image get(int id) {
+
         return em.find(Image.class, id);
 
     }
@@ -53,10 +53,10 @@ public class ImageDao {
         final float[] STD = {1f, 1f, 1f};
 
         //Implement an Function to detect all images which uploaded from POST Request
-        int currentId = images.get(0).getId();
+
         for (Image predictedImage : images) {
             Image image = em.createQuery("select i from Image i where i.id = :ids", Image.class)
-                    .setParameter("ids", currentId)
+                    .setParameter("ids", predictedImage.getId())
                     .getSingleResult();
             if (!image.equals(null)) {
                 /*Classification Algorithm*/
@@ -101,7 +101,6 @@ public class ImageDao {
                         //em.persist(item);
                         em.merge(predictedImage);
                         em.flush();
-                        currentId++;
                     }
                 } else {
                     predictedImage.setClassification("empty");
@@ -110,10 +109,8 @@ public class ImageDao {
                     //em.persist(item);
                     em.merge(predictedImage);
                     em.flush();
-                    currentId++;
                 }
             } else {
-                currentId++;
                 System.out.println("No Entity for ID found!");
             }
         }
@@ -123,6 +120,16 @@ public class ImageDao {
 
     public List<Image> getAll() {
         return em.createQuery("select i from Image i ", Image.class).getResultList();
+    }
+    public List<Image> getAllAlreadyUsedImages() {
+        List<Image> imageList = em.createQuery("select i from Image i ", Image.class).getResultList();
+        List<Image> resultList = new LinkedList<>();
+        for (Image image : imageList) {
+            if (image.isAlreadyUsed()) {
+                resultList.add(image);
+            }
+        }
+        return resultList;
     }
     public void delete(Image image) {
         em.remove(image);

@@ -4,7 +4,6 @@ import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
 import com.aktionen.agrar.dao.ImageDao;
 import com.aktionen.agrar.model.Image;
-import com.aktionen.agrar.model.Shop;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -22,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 
-@Path("/file")
+@Path("/image")
 public class ImageResource {
 
     @Inject
     ImageDao imageDao;
+
 
     @GET
     @Path("/getAll")
@@ -35,6 +35,15 @@ public class ImageResource {
     public List<Image> all() {
         return imageDao.getAll();
     }
+
+    @GET
+    @Path("/getImagesForView")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public List<Image> getAlreadyUsedImages() {
+        return imageDao.getAllAlreadyUsedImages();
+    }
+
 
 
     @POST
@@ -54,32 +63,18 @@ public class ImageResource {
                 InputStream inputStream = inputPart.getBody(InputStream.class,null);
 
                 byte [] bytes = IOUtils.toByteArray(inputStream);
-
-                if(imageDao.getAll().isEmpty()){
-                    //write to Database
-                    Image image = new Image();
-                    image.setBytes(bytes);
-                    imageDao.add(image);
-                    //com.aktionen.agrar.classification of the uploaded Image
-                    List<Image> imageList=imageDao.getAll();
-                    imageDao.insertAll(imageList);
-                    System.out.println("Directly inserted, without previous deleting");
-                }else{
-                    //Delete the content of the image Table before inserting a new uploaded picture
-                    List<Image> deletableImages =imageDao.getAll();
-                    for(int i = 0; i < deletableImages.size(); i++){
-                        imageDao.delete(deletableImages.get(i));
-                    }
-
-                    //write to Database
-                    Image image = new Image();
-                    image.setBytes(bytes);
-                    imageDao.add(image);
-                    //com.aktionen.agrar.classification of the uploaded Image
-                    List<Image> imageList=imageDao.getAll();
-                    imageDao.insertAll(imageList);
-                    System.out.println("First deleted, then inserted");
-                }
+            //write to Database
+            Image image = new Image();
+            image.setBytes(bytes);
+            //Set the usability of the image to true
+            image.setUsable(true);
+            //This image wasn't used ever before
+            image.setAlreadyUsed(false);
+            imageDao.add(image);
+            //com.aktionen.agrar.classification of the uploaded Image
+            List<Image> imageList=imageDao.getAll();
+            imageDao.insertAll(imageList);
+            System.out.println("Directly inserted");
 
         }
 
@@ -87,5 +82,18 @@ public class ImageResource {
                 .entity("uploadFile is called, Uploaded file name : " + uploadForm.toString()).build();
 
 
+    }
+    //This function should be called after you opened the gridView of the previously uploaded pictures,
+    //when you click on an item to select the similarity result of the clicked picture.
+    @Path("/{id:[0-9]+}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Image getImageById(@PathParam("id") int id) {
+
+        Image image = imageDao.get(id);
+        image.setUsable(true);
+
+        return imageDao.get(id);
     }
 }

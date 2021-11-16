@@ -101,7 +101,7 @@ public class CsvDownloader {
 
 
     @Transactional
-    @Scheduled(every = "2s", delayed = "30s")
+    @Scheduled(every = "2s", delayed = "10s")
     public void process() throws IOException, TranslateException, ImageReadException, ModelException {
 
         Item item = firstItemElement();
