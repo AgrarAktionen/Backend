@@ -29,6 +29,10 @@ public class Image {
     @Lob
     private byte[] bytes;
 
+    @FormParam("username")
+    @PartType(MediaType.TEXT_PLAIN)
+    private String username;
+
 
 }
 

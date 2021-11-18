@@ -36,6 +36,7 @@ public class ImageDao {
     @Inject
     EntityManager em;
 
+
     public Image add(@NotNull Image image) {
         return em.merge(image);
     }

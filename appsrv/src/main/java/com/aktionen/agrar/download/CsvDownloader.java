@@ -3,6 +3,7 @@ package com.aktionen.agrar.download;
 
 import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
+import com.aktionen.agrar.categorize.dao.CategoriesDao;
 import com.aktionen.agrar.dao.ItemDao;
 import com.aktionen.agrar.dao.PredectionDao;
 import com.aktionen.agrar.dao.PriceDao;
@@ -26,7 +27,7 @@ import java.util.List;
 @QuarkusMain
 public class CsvDownloader {
 
-    String fileName = "/var/lib/appsrvstorage/file.csv";
+    String fileName = "file.csv";
 
     List<Item> items = new LinkedList<>();
     List<Price> prices = new LinkedList<>();
@@ -85,7 +86,7 @@ public class CsvDownloader {
                 "\"Milchsammelstück Interpuls ITP207\";\"keine Angabe\";\"FA146\";\"Tierhaltung>Milchwirtschaft>Melkzeuge und Zubehör>Milchsammelstücke>Milchsammelstücke Schafe/Ziege\";\"Vollautomatisches Milchsammelstück für Schafe und Ziegen 20ccm, 30Gramm, Milchanschluss 14x10mm Ein Absperrventil öffnet und schließt automatisch sowol beim Melken als auch beim Waschen (in Ruhestellung geschlossen)\";https://www.faie.at/media/image/c4/0a/ef/art_pro_fo_ed_146_200x200.jpg;\"https://www.faie.at/tierhaltung/milchwirtschaft/melkzeuge-und-zubehoer/milchsammelstuecke/milchsammelstuecke-schafeziege/5000146/milchsammelstueck-interpuls-itp207\";lagernd (derzeit bis zu 10 Werktage Lieferzeit);23,50;33,50;\"\"; 9,95;";
         InputStream inputStream = new ByteArrayInputStream(s.getBytes());
         */
-        FileOutputStream fileOS = new FileOutputStream("/var/lib/appsrvstorage/file.csv");
+        FileOutputStream fileOS = new FileOutputStream("file.csv");
         IOUtils.copy(inputStream, fileOS);
 
     }
@@ -99,9 +100,12 @@ public class CsvDownloader {
     @Inject
     PredectionDao predectionDao;
 
+    @Inject
+    CategoriesDao categoriesDao;
+
 
     @Transactional
-    @Scheduled(every = "2s", delayed = "10s")
+    @Scheduled(every = "1s", delayed = "10s")
     public void process() throws IOException, TranslateException, ImageReadException, ModelException {
 
         Item item = firstItemElement();
@@ -110,6 +114,9 @@ public class CsvDownloader {
         itemDao.insert(item, "Faie");
         priceDao.insertAll(price, item);
         predectionDao.insertAll(predictedItem, item);
+        item.setPrimeCategory(categoriesDao.selectPrime(item));
+        item.setSecondCategory(categoriesDao.selectSecond(item));
+        item.setThirdCategory(categoriesDao.selectThird(item));
         deleteFirstElement();
 
     }

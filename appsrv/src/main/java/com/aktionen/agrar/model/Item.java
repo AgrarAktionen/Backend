@@ -1,5 +1,6 @@
 package com.aktionen.agrar.model;
 
+import com.aktionen.agrar.categorize.model.Categories;
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.Data;
 
@@ -64,6 +65,11 @@ public class Item {
     private APILink apiLink;
 
 /*
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoriesId")
+    private Categories categories;
+
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "itemId", referencedColumnName = "itemId")
     private PredictedItem predictedItem;
@@ -71,6 +77,9 @@ public class Item {
  */
 
     private boolean inserted = false;
+    private String primeCategory;
+    private String secondCategory;
+    private String thirdCategory;
 
 
 }
