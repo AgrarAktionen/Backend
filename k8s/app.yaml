@@ -10,6 +10,9 @@ data:
         echo "waiting for godot ..."
         sleep 2
     done
+  leocloud.cnf: |
+    [mysqld]
+    innodb_use_native_aio = 0
 ---
 apiVersion: v1
 kind: Secret
@@ -43,7 +46,7 @@ spec:
   storageClassName: standard
   resources:
     requests:
-      storage: 50Mi
+      storage: 512Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -69,8 +72,8 @@ spec:
               mountPath: /var/lib/appsrvstorage
           resources:
             limits:
-              memory: "1024Mi"
-              cpu: "1000m"
+              memory: 1024Mi
+              cpu: 2048m
       initContainers:
         - name: wait
           image: mysql:8
@@ -86,7 +89,6 @@ spec:
                   name: mysql-admin
                   key: username
             - name: DATABASE
-#              value: mysql
               valueFrom:
                 secretKeyRef:
                   name: mysql-admin
@@ -160,9 +162,6 @@ spec:
                 secretKeyRef:
                   name: mysql-admin
                   key: password
-            - name: MYSQL_ROOT_HOST
-              value: '%'
-
       volumes:
         - name: init-script
           configMap:
@@ -229,24 +228,33 @@ spec:
             items:
               - key: create.sql
                 path: create.sql
+        - name: mysql-cnf
+          configMap:
+            name: mysql-setup
+            items:
+              - key: leocloud.cnf
+                path: leocloud.cnf                  
       containers:
         - name: mysql
           image: mysql:8
+#          command: ["tail", "-f", "/dev/null"]
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "1000m"
+              memory: 1Gi
+              cpu: 2048m
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-storage
-              mountPath: /var/lib/mysql/
+              mountPath: /var/lib/mysql
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
-#              readOnly: true
-#          command: ["tail"]
-#          args: [ "-f", "/dev/null" ]
+              readOnly: true
+            - name: mysql-cnf
+              mountPath: /etc/mysql/conf.d/leocloud.cnf
+              subPath: leocloud.cnf
+              readOnly: true      
           env:
             - name: MYSQL_USER
               valueFrom:
