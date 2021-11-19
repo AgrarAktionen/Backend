@@ -176,10 +176,15 @@
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Server dependencies -->
     <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <scope>test</scope>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy</artifactId>
+    </dependency>
+    <!-- Client dependencies -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

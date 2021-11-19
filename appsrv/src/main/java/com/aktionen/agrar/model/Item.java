@@ -80,6 +80,7 @@ public class Item {
     private String primeCategory;
     private String secondCategory;
     private String thirdCategory;
+    private String fourthCategory;
 
 
 }

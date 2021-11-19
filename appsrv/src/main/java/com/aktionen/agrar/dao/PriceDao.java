@@ -27,8 +27,8 @@ public class PriceDao {
             price.setPricePk(new PricePk(item.getItemId(), timestamp)); // -> throws an ERROR because the correct update implementation has not been done yet!
                                                                         // however, it can be neglected until fixing TODO: Solving Price ERROR -> Maybe you have to change the primary key relation from the Price to the Item Model to a 1:n relation because one Item may have more Prices because of the fact that it had changed. So you have to check if the timestamp to specify!
 
-        // em.persist(price);
-            em.merge(price);
+            em.persist(price);
+            //em.merge(price);
             em.flush();
 
 

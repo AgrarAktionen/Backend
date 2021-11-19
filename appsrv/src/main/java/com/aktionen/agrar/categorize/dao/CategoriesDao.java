@@ -2,6 +2,7 @@ package com.aktionen.agrar.categorize.dao;
 
 import com.aktionen.agrar.model.APILink;
 import com.aktionen.agrar.model.Item;
+import com.sun.xml.bind.v2.TODO;
 
 
 import javax.enterprise.context.Dependent;
@@ -47,6 +48,17 @@ public class CategoriesDao {
                 .setParameter("primcat", primeCategory)
                 .setParameter("secocat", secondCategory)
                 .setParameter("thircat", thirdCategory)
+                .getResultList();
+
+        return itemList;
+    }
+    public List<Item> getFourth(String primeCategory, String secondCategory, String thirdCategory,String fourthCategory) {
+        thirdCategory.replace("%20", " ");
+        List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:secocat and i.thirdCategory =:thircat and i.fourthCategory =:fourcat", Item.class)
+                .setParameter("primcat", primeCategory)
+                .setParameter("secocat", secondCategory)
+                .setParameter("thircat", thirdCategory)
+                .setParameter("fourcat", fourthCategory)
                 .getResultList();
 
         return itemList;
@@ -107,7 +119,7 @@ public class CategoriesDao {
         String primeCategory = item.getPrimeCategory();
         String itemCategoryPath = item.getKategoriepfad().replaceFirst(primeCategory, "");
         String secondCategory = item.getSecondCategory();
-        String thirdCategory = itemCategoryPath.replace(secondCategory, "");
+        String thirdCategory = itemCategoryPath.replaceFirst(secondCategory, "");
         //String correctedThirdCategory = thirdCategory.replaceFirst(">", "");
         String correctedThirdCategory = thirdCategory.substring(2);
         if(correctedThirdCategory.equals(">") || correctedThirdCategory.equals(">>") || correctedThirdCategory.equals("")){
@@ -120,6 +132,37 @@ public class CategoriesDao {
                 if (posTo != -1) //if found char
                 {
                     output = correctedThirdCategory.substring(posFrom, posTo - posFrom);
+
+
+                }
+            }
+        }
+        return output;
+    }
+
+    //TODO Volle Funktionalität erweitern: Bei einigen noch nicht möglich!
+
+    public String selectFourth(Item item) {
+
+        String output = "";
+        String primeCategory = item.getPrimeCategory();
+        String itemCategoryPath = item.getKategoriepfad().replaceFirst(primeCategory, "");
+        String secondCategory = item.getSecondCategory();
+        String itemCategoryPath1 = itemCategoryPath.replaceFirst(secondCategory, "");
+        String thirdCategory = item.getThirdCategory();
+        String fourthCategory =  itemCategoryPath1.replaceFirst(thirdCategory, "");
+        //String correctedThirdCategory = thirdCategory.replaceFirst(">", "");
+        String correctedFourthCategory = fourthCategory.substring(3);
+        if(correctedFourthCategory.equals(">") || correctedFourthCategory.equals(">>") || correctedFourthCategory.equals(">>>") || correctedFourthCategory.equals("")){
+            output = thirdCategory;
+        }else {
+            int posFrom = correctedFourthCategory.indexOf("");
+            if (posFrom != -1) //if found char
+            {
+                int posTo = correctedFourthCategory.indexOf(">", posFrom + 1);
+                if (posTo != -1) //if found char
+                {
+                    output = correctedFourthCategory.substring(posFrom, posTo - posFrom);
 
 
                 }
