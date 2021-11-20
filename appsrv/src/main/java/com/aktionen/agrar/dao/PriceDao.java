@@ -22,6 +22,14 @@ public class PriceDao {
 
     public void insertAll(Price price, Item item){
 
+            //percentage between "stattpreis" and "bruttopreis"
+            double stattpreis = Double.parseDouble(price.getStattpreis().replace(",", "."));
+            double bruttopreis = Double.parseDouble(price.getBruttopreis().replace(",", "."));
+            double percentage = ((stattpreis-bruttopreis)/stattpreis)*100;
+            price.setPercentage(percentage);
+
+
+
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             //price.setPricePk(new PricePk(1000, timestamp));
             price.setPricePk(new PricePk(item.getItemId(), timestamp)); // -> throws an ERROR because the correct update implementation has not been done yet!
