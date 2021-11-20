@@ -132,6 +132,22 @@ public class ImageDao {
         }
         return resultList;
     }
+    public List<Image> getAlreadyUsedImagesFromUser(String identification) {
+        List<Image> imageList = em.createQuery("select i from Image i ", Image.class).getResultList();
+        List<Image> resultList = new LinkedList<>();
+        for (Image image : imageList) {
+            identification.replace("%7B", "{");
+            identification.replace("%7D", "}");
+            identification.replace("/", "");
+            if(image.getUsername().equals(identification)){
+                if (image.isAlreadyUsed()) {
+                    resultList.add(image);
+                }
+            }
+
+        }
+        return resultList;
+    }
     public void delete(Image image) {
         em.remove(image);
     }

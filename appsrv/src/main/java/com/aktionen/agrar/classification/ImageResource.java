@@ -4,6 +4,7 @@ import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
 import com.aktionen.agrar.dao.ImageDao;
 import com.aktionen.agrar.model.Image;
+import com.aktionen.agrar.users.model.User;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -36,12 +37,24 @@ public class ImageResource {
         return imageDao.getAll();
     }
 
+    //This function is made to return all images, from all users, ever made
     @GET
     @Path("/getImagesForView")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public List<Image> getAlreadyUsedImages() {
         return imageDao.getAllAlreadyUsedImages();
+    }
+
+    //This function is made to return all images as a JSON format which a specified user has made
+    //You have to transfer a String (The String is temporarily saved in the textView3 in Android Studio) which
+    //includes the correct identification properties for each single user.
+    @Path("/getImagesForView/forSpecifiedUser")
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Image> getUserByEmailAndPassword(String identification) {
+        return imageDao.getAlreadyUsedImagesFromUser(identification);
     }
 
 
