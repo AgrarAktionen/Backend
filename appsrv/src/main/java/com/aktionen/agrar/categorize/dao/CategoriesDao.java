@@ -3,14 +3,14 @@ package com.aktionen.agrar.categorize.dao;
 import com.aktionen.agrar.model.APILink;
 import com.aktionen.agrar.model.Item;
 import com.sun.xml.bind.v2.TODO;
+import netscape.javascript.JSObject;
 
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Dependent
 @Named
@@ -23,6 +23,56 @@ public class CategoriesDao {
         List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
         return itemList;
     }
+    //____________________________Functions for getting the Categories of the wanted section____________________________//
+    public Set<String> getPrimeCategories(){
+        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+        List<String> categoriesList = new LinkedList<>();
+        for(Item item: itemList){
+            categoriesList.add(item.getPrimeCategory());
+        }
+
+        Set<String> categories = new HashSet<String>(categoriesList);
+
+        return categories;
+    }
+
+    public Set<String> getSecondCategories(){
+        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+        List<String> categoriesList = new LinkedList<>();
+        for(Item item: itemList){
+            categoriesList.add(item.getSecondCategory());
+        }
+
+        Set<String> categories = new HashSet<String>(categoriesList);
+
+        return categories;
+    }
+    public Set<String> getThirdCategories(){
+        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+        List<String> categoriesList = new LinkedList<>();
+        for(Item item: itemList){
+            categoriesList.add(item.getThirdCategory());
+        }
+
+        Set<String> categories = new HashSet<String>(categoriesList);
+
+        return categories;
+    }
+    public Set<String> getFourthCategories(){
+        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+        List<String> categoriesList = new LinkedList<>();
+        for(Item item: itemList){
+            categoriesList.add(item.getFourthCategory());
+        }
+
+        Set<String> categories = new HashSet<String>(categoriesList);
+
+        return categories;
+    }
+
+
+
+
     //____________________________Functions for getting the Items of the wanted category/categories____________________________//
     public List<Item> getPrime(String primeCategory) {
         primeCategory.replace("%20", " ");
