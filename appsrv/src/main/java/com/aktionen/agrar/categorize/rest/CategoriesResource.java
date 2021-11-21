@@ -24,6 +24,9 @@ public class CategoriesResource {
         return categoriesDao.selectAll();
     }
 
+    //-------------this functions provide possibility to get the available categories with the right sub categories--------------//
+    //Now it is possible to get the right set of sub categories form a category.
+
     @Path("/getPrimeCategories")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -31,29 +34,29 @@ public class CategoriesResource {
 
         return categoriesDao.getPrimeCategories();
     }
-    @Path("/getSecondCategories")
+    @Path("/getSecondCategories/{primeCategory}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<String> getSecondCategories(){
+    public Set<String> getSecondCategories(@PathParam("primeCategory") String primeCategory){
 
-        return categoriesDao.getSecondCategories();
+        return categoriesDao.getSecondCategories(primeCategory);
     }
-    @Path("/getThirdCategories")
+    @Path("/getThirdCategories/{primeCategory}/{secondCategory}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<String> getThirdCategories(){
+    public Set<String> getThirdCategories(@PathParam("primeCategory") String primeCategory, @PathParam("secondCategory") String secondCategory){
 
-        return categoriesDao.getThirdCategories();
+        return categoriesDao.getThirdCategories(primeCategory, secondCategory);
     }
-    @Path("/getFourthCategories")
+    @Path("/getFourthCategories/{primeCategory}/{secondCategory}/{thirdCategory}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<String> getFourthCategories(){
+    public Set<String> getFourthCategories(@PathParam("primeCategory") String primeCategory, @PathParam("secondCategory") String secondCategory, @PathParam("thirdCategory") String thirdCategory){
 
-        return categoriesDao.getFourthCategories();
+        return categoriesDao.getFourthCategories(primeCategory, secondCategory, thirdCategory);
     }
 
-
+    //-------------------------------this functions are returning the ITEMs of the selected categories-------------------------------//
     @GET
     @Path("/{primeCategory}")
     @Produces(MediaType.APPLICATION_JSON)

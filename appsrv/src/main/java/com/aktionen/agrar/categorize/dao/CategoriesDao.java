@@ -10,6 +10,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.ws.rs.PathParam;
 import java.util.*;
 
 @Dependent
@@ -36,8 +37,11 @@ public class CategoriesDao {
         return categories;
     }
 
-    public Set<String> getSecondCategories(){
-        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+    public Set<String> getSecondCategories(String primeCategory){
+        primeCategory.replace("%20", " ");
+        List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat", Item.class)
+                .setParameter("primcat", primeCategory)
+                .getResultList();
         List<String> categoriesList = new LinkedList<>();
         for(Item item: itemList){
             categoriesList.add(item.getSecondCategory());
@@ -47,8 +51,13 @@ public class CategoriesDao {
 
         return categories;
     }
-    public Set<String> getThirdCategories(){
-        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+    public Set<String> getThirdCategories(String primeCategory, String secondCategory){
+        primeCategory.replace("%20", " ");
+        secondCategory.replace("%20", " ");
+        List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:seccat", Item.class)
+                .setParameter("primcat", primeCategory)
+                .setParameter("seccat", secondCategory)
+                .getResultList();
         List<String> categoriesList = new LinkedList<>();
         for(Item item: itemList){
             categoriesList.add(item.getThirdCategory());
@@ -58,8 +67,15 @@ public class CategoriesDao {
 
         return categories;
     }
-    public Set<String> getFourthCategories(){
-        List<Item> itemList = em.createQuery("SELECT i from Item i", Item.class).getResultList();
+    public Set<String> getFourthCategories(String primeCategory, String secondCategory, String thirdCategory){
+        primeCategory.replace("%20", " ");
+        secondCategory.replace("%20", " ");
+        thirdCategory.replace("%20", " ");
+        List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:secocat and i.thirdCategory =:thircat", Item.class)
+                .setParameter("primcat", primeCategory)
+                .setParameter("secocat", secondCategory)
+                .setParameter("thircat", thirdCategory)
+                .getResultList();
         List<String> categoriesList = new LinkedList<>();
         for(Item item: itemList){
             categoriesList.add(item.getFourthCategory());
@@ -84,6 +100,7 @@ public class CategoriesDao {
     }
 
     public List<Item> getSecond(String primeCategory, String secondCategory) {
+        primeCategory.replace("%20", " ");
         secondCategory.replace("%20", " ");
         List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:seccat", Item.class)
                 .setParameter("primcat", primeCategory)
@@ -93,6 +110,8 @@ public class CategoriesDao {
         return itemList;
     }
     public List<Item> getThird(String primeCategory, String secondCategory, String thirdCategory) {
+        primeCategory.replace("%20", " ");
+        secondCategory.replace("%20", " ");
         thirdCategory.replace("%20", " ");
         List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:secocat and i.thirdCategory =:thircat", Item.class)
                 .setParameter("primcat", primeCategory)
@@ -103,7 +122,10 @@ public class CategoriesDao {
         return itemList;
     }
     public List<Item> getFourth(String primeCategory, String secondCategory, String thirdCategory,String fourthCategory) {
+        primeCategory.replace("%20", " ");
+        secondCategory.replace("%20", " ");
         thirdCategory.replace("%20", " ");
+        fourthCategory.replace("%20", " ");
         List<Item> itemList = em.createQuery("select i from Item i where i.primeCategory = :primcat and i.secondCategory =:secocat and i.thirdCategory =:thircat and i.fourthCategory =:fourcat", Item.class)
                 .setParameter("primcat", primeCategory)
                 .setParameter("secocat", secondCategory)
